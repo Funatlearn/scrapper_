@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Scraper & Link Crawler | Client-Side Web App</title>
+  <meta name="description" content="A powerful client-side web scraper and depth-based link crawler hosted on GitHub Pages. Extract links, filter by depth, toggle columns, and export to CSV.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-group">
+        <div class="logo-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="app-title">Web Scraper & Link Crawler</h1>
+          <p class="app-subtitle">Client-Side Deep Link Extractor • Ready for GitHub Pages</p>
+        </div>
+      </div>
+      
+      <a href="https://github.com" target="_blank" rel="noopener" class="badge-github">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+        GitHub Pages Ready
+      </a>
+    </header>
+
+    <!-- Scraper Form Controls -->
+    <section class="glass-card">
+      <form id="scraper-form">
+        <div class="form-grid">
+          
+          <!-- Website Link Input -->
+          <div class="input-group">
+            <label for="target-url">
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+              </svg>
+              Website Link *
+            </label>
+            <input type="text" id="target-url" class="input-control" placeholder="https://example.com" required autocomplete="off">
+          </div>
+
+          <!-- Crawl Depth (Optional) -->
+          <div class="input-group">
+            <label for="max-depth">
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+              </svg>
+              Crawl Depth
+            </label>
+            <input type="number" id="max-depth" class="input-control" value="1" min="0" max="5" placeholder="0 = Target Page Only">
+          </div>
+
+          <!-- CORS Proxy Provider -->
+          <div class="input-group">
+            <label for="proxy-provider">
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              CORS Proxy
+            </label>
+            <select id="proxy-provider" class="input-control">
+              <option value="corsproxy">corsproxy.io (Recommended)</option>
+              <option value="allorigins">allorigins.win</option>
+              <option value="direct">Direct Fetch (No Proxy)</option>
+              <option value="custom">Custom Proxy URL</option>
+            </select>
+          </div>
+
+          <!-- Domain Scope -->
+          <div class="input-group">
+            <label for="domain-scope">
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2h1.5a2.5 2.5 0 002.5-2.5V11.4"/>
+              </svg>
+              Domain Scope
+            </label>
+            <select id="domain-scope" class="input-control">
+              <option value="same-origin">Same Origin (Internal Links)</option>
+              <option value="same-domain">Same Domain (Subdomains)</option>
+              <option value="any">Allow External Domains</option>
+            </select>
+          </div>
+
+        </div>
+
+        <!-- Custom Proxy Input (Hidden by default) -->
+        <div id="custom-proxy-container" class="input-group" style="display: none; margin-top: 1rem;">
+          <label for="custom-proxy-url">Custom Proxy URL Prefix</label>
+          <input type="text" id="custom-proxy-url" class="input-control" placeholder="https://my-proxy.com/?url=">
+        </div>
+
+        <!-- Advanced Options Toggle -->
+        <button type="button" id="toggle-advanced" class="advanced-options-toggle">
+          ⚙️ Advanced Crawler Options
+        </button>
+
+        <div id="advanced-panel" class="advanced-options-panel">
+          <div class="input-group">
+            <label for="concurrency">Max Parallel Requests</label>
+            <input type="number" id="concurrency" class="input-control" value="3" min="1" max="10">
+          </div>
+          <div class="input-group" style="flex-direction: row; align-items: center; gap: 0.5rem; margin-top: 1.5rem;">
+            <input type="checkbox" id="ignore-binary" checked style="accent-color: var(--accent-primary); width: 18px; height: 18px;">
+            <label for="ignore-binary" style="text-transform: none; font-size: 0.9rem; cursor: pointer;">
+              Ignore Images / Binary Downloads (.png, .pdf, .zip)
+            </label>
+          </div>
+        </div>
+
+        <!-- Controls Row -->
+        <div class="controls-row">
+          <button type="submit" id="btn-start" class="btn btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+            </svg>
+            Start Scraping
+          </button>
+
+          <button type="button" id="btn-pause" class="btn btn-secondary" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Pause
+          </button>
+
+          <button type="button" id="btn-stop" class="btn btn-danger" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H10a1 1 0 01-1-1v-4z"/>
+            </svg>
+            Stop
+          </button>
+
+          <button type="button" id="btn-reset" class="btn btn-secondary">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            Reset
+          </button>
+        </div>
+
+      </form>
+    </section>
+
+    <!-- Metrics Dashboard -->
+    <section class="metrics-grid">
+      <div class="metric-card">
+        <span class="metric-title">Discovered Links</span>
+        <span id="metric-discovered" class="metric-value">0</span>
+      </div>
+
+      <div class="metric-card">
+        <span class="metric-title">Pages Crawled</span>
+        <span id="metric-crawled" class="metric-value">0</span>
+      </div>
+
+      <div class="metric-card">
+        <span class="metric-title">Queue Size</span>
+        <span id="metric-queue" class="metric-value">0</span>
+      </div>
+
+      <div class="metric-card">
+        <span class="metric-title">Errors</span>
+        <span id="metric-errors" class="metric-value">0</span>
+      </div>
+
+      <div class="metric-card">
+        <span class="metric-title">Elapsed Time</span>
+        <span id="metric-time" class="metric-value">00:00</span>
+      </div>
+    </section>
+
+    <!-- Progress Meter -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+      <div id="status-badge" class="status-badge">
+        <div class="dot"></div>
+        <span>Idle</span>
+      </div>
+    </div>
+    <div class="progress-bar-container">
+      <div id="progress-bar-fill" class="progress-bar-fill"></div>
+    </div>
+
+    <!-- Toolbar: Search, Filters, Column Visibility & Export -->
+    <section class="glass-card toolbar-row" style="padding: 1rem 1.5rem;">
+      <div class="toolbar-left">
+        <!-- Search Box -->
+        <div class="search-box">
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input type="text" id="table-search" class="input-control" placeholder="Search extracted links...">
+        </div>
+
+        <!-- Filter by Type -->
+        <select id="filter-type" class="input-control" style="width: auto;">
+          <option value="all">All Links</option>
+          <option value="internal">Internal Only</option>
+          <option value="external">External Only</option>
+        </select>
+      </div>
+
+      <div class="toolbar-right">
+        <!-- Column Visibility Toggle Dropdown -->
+        <div id="col-toggle-wrapper" class="dropdown-wrapper">
+          <button type="button" id="col-toggle-btn" class="btn btn-secondary" style="padding: 0.6rem 1rem; font-size: 0.85rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+            Columns
+          </button>
+          
+          <div class="dropdown-menu">
+            <label class="dropdown-item">
+              <input type="checkbox" class="col-toggle-checkbox" data-col="col-index" checked> # (Index)
+            </label>
+            <label class="dropdown-item">
+              <input type="checkbox" class="col-toggle-checkbox" data-col="col-url" checked> Link URL
+            </label>
+            <label class="dropdown-item">
+              <input type="checkbox" class="col-toggle-checkbox" data-col="col-anchor" checked> Anchor Text
+            </label>
+            <label class="dropdown-item">
+              <input type="checkbox" class="col-toggle-checkbox" data-col="col-depth" checked> Depth Level
+            </label>
+            <label class="dropdown-item">
+              <input type="checkbox" class="col-toggle-checkbox" data-col="col-parent" checked> Parent Page
+            </label>
+            <label class="dropdown-item">
+              <input type="checkbox" class="col-toggle-checkbox" data-col="col-type" checked> Link Type
+            </label>
+            <label class="dropdown-item">
+              <input type="checkbox" class="col-toggle-checkbox" data-col="col-status" checked> HTTP Status
+            </label>
+          </div>
+        </div>
+
+        <!-- Export CSV Button -->
+        <button type="button" id="btn-export-csv" class="btn btn-secondary" disabled style="padding: 0.6rem 1rem; font-size: 0.85rem;">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          Export CSV
+        </button>
+
+        <!-- Export JSON Button -->
+        <button type="button" id="btn-export-json" class="btn btn-secondary" disabled style="padding: 0.6rem 1rem; font-size: 0.85rem;">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg>
+          JSON
+        </button>
+      </div>
+    </section>
+
+    <!-- Results Data Table -->
+    <section class="glass-card" style="padding: 0; overflow: hidden;">
+      <div class="table-responsive">
+        <table id="results-table" class="results-table">
+          <thead>
+            <tr>
+              <th class="col-index">#</th>
+              <th class="col-url">Link URL</th>
+              <th class="col-anchor">Anchor Text / Title</th>
+              <th class="col-depth">Depth</th>
+              <th class="col-parent">Parent URL</th>
+              <th class="col-type">Type</th>
+              <th class="col-status">Status</th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <!-- Dynamic Rows Append Here -->
+          </tbody>
+        </table>
+
+        <div id="empty-state" class="empty-state">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+          </svg>
+          <p>No links extracted yet. Enter a starting URL above and click <strong>Start Scraping</strong>.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- JavaScript Modules -->
+  <script src="js/proxy.js"></script>
+  <script src="js/crawler.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
