@@ -168,25 +168,12 @@ class WebCrawler {
       return;
     }
 
-    // Fetch page HTML
-    const fetchUrl = CorsProxy.getProxyUrl(item.url, this.proxyProvider, this.customProxyUrl);
-    
+    // Fetch page HTML via CORS proxy manager with fallback chain
     try {
-      const response = await fetch(fetchUrl, {
-        headers: {
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
-        }
-      });
+      const result = await CorsProxy.fetchHtml(item.url, this.proxyProvider, this.customProxyUrl);
 
-      if (!response.ok) {
-        item.status = `HTTP ${response.status}`;
-        this.stats.errorCount++;
-        this.onError(item, `HTTP ${response.status}`);
-        return;
-      }
-
-      item.status = '200 OK';
-      const htmlText = await response.text();
+      item.status = result.status || '200 OK';
+      const htmlText = result.html;
       this.stats.crawledCount++;
 
       // Extract new links from HTML
