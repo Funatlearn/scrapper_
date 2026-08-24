@@ -75,10 +75,12 @@
               CORS Proxy
             </label>
             <select id="proxy-provider" class="input-control">
-              <option value="allorigins-json">AllOrigins JSON (Recommended - Bypasses CORS header errors)</option>
-              <option value="corsproxy">corsproxy.io</option>
+              <option value="auto" selected>Auto (Smart Proxy Failover - Bypasses CORS & Bans)</option>
               <option value="codetabs">CodeTabs Proxy</option>
-              <option value="allorigins-raw">allorigins.win (Raw)</option>
+              <option value="corsproxy-org">CorsProxy.org</option>
+              <option value="allorigins-json">AllOrigins JSON</option>
+              <option value="thingproxy">ThingProxy</option>
+              <option value="corsproxy">corsproxy.io</option>
               <option value="direct">Direct Fetch (No Proxy)</option>
               <option value="custom">Custom Proxy URL</option>
             </select>
@@ -93,9 +95,9 @@
               Domain Scope
             </label>
             <select id="domain-scope" class="input-control">
-              <option value="same-origin">Same Origin (Internal Links)</option>
-              <option value="same-domain">Same Domain (Subdomains)</option>
-              <option value="any">Allow External Domains</option>
+              <option value="any" selected>Allow All Origins (Internal & External)</option>
+              <option value="same-origin">Same Origin Only</option>
+              <option value="same-domain">Same Domain (Subdomains Included)</option>
             </select>
           </div>
 

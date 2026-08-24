@@ -160,9 +160,9 @@ class WebCrawler {
     this.stats.totalDiscovered = this.discoveredLinks.length;
     this.onItemDiscovered(item);
 
-    // If depth reached max limit, do not fetch HTML for sub-links
-    if (item.depth >= this.maxDepth) {
-      item.status = 'Depth Limit Reached';
+    // If depth is greater than max depth, do not fetch HTML for sub-links
+    if (item.depth > this.maxDepth) {
+      item.status = 'Max Depth Reached';
       this.stats.crawledCount++;
       this.emitProgress();
       return;
@@ -207,19 +207,27 @@ class WebCrawler {
     const links = [];
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
-    const anchorElements = doc.querySelectorAll('a[href]');
 
-    const baseObj = new URL(currentUrl);
+    // Check document base tag
+    let baseUrl = currentUrl;
+    const baseTag = doc.querySelector('base[href]');
+    if (baseTag && baseTag.getAttribute('href')) {
+      try {
+        baseUrl = new URL(baseTag.getAttribute('href'), currentUrl).href;
+      } catch (e) {}
+    }
+
+    const anchorElements = doc.querySelectorAll('a[href]');
+    const baseObj = new URL(baseUrl);
 
     anchorElements.forEach(anchor => {
       const rawHref = anchor.getAttribute('href');
-      if (!rawHref || rawHref.startsWith('javascript:') || rawHref.startsWith('mailto:') || rawHref.startsWith('tel:')) {
+      if (!rawHref || rawHref.startsWith('javascript:') || rawHref.startsWith('mailto:') || rawHref.startsWith('tel:') || rawHref.startsWith('#')) {
         return;
       }
 
       try {
         const absoluteUrlObj = new URL(rawHref, baseObj.href);
-        // Clean fragment
         absoluteUrlObj.hash = '';
 
         const absoluteUrl = absoluteUrlObj.href;
@@ -230,7 +238,7 @@ class WebCrawler {
         }
 
         const isInternal = this.checkSameDomain(absoluteUrlObj);
-        const anchorText = anchor.textContent?.trim() || anchor.getAttribute('title') || '[No Text]';
+        const anchorText = anchor.textContent?.trim() || anchor.getAttribute('title') || anchor.getAttribute('aria-label') || '[No Text]';
 
         links.push({
           url: absoluteUrl,
